@@ -13,10 +13,17 @@ class StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(14),
+        color: CupertinoColors.systemBackground,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: const [
+          BoxShadow(
+            color: CupertinoColors.systemGrey4,
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,8 +39,9 @@ class StatChip extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
+              color: CupertinoColors.label,
             ),
           ),
         ],

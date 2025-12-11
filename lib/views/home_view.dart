@@ -10,8 +10,10 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CryptoProvider>();
+    final crypto = provider.selectedCrypto;
 
     return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: const CupertinoNavigationBar(
         middle: Text('Crypto Widget'),
       ),
@@ -27,29 +29,35 @@ class HomeView extends StatelessWidget {
                         Text(
                           provider.error!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 15),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: CupertinoColors.destructiveRed,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         CupertinoButton.filled(
                           onPressed: () {
-                            provider.loadBitcoin();
+                            provider.loadCryptos();
                           },
                           child: const Text('Reintentar'),
                         ),
                       ],
                     )
-                  : provider.crypto == null
+                  : crypto == null
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
                               'No hay datos disponibles.',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: CupertinoColors.label,
+                              ),
                             ),
                             const SizedBox(height: 12),
                             CupertinoButton(
                               onPressed: () {
-                                provider.loadBitcoin();
+                                provider.loadCryptos();
                               },
                               child: const Text('Volver a intentar'),
                             ),
@@ -59,30 +67,104 @@ class HomeView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'Widget informativo',
+                              'Criptomonedas en tiempo real',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 22,
                                 fontWeight: FontWeight.bold,
+                                color: CupertinoColors.label,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 4),
+                            const Text(
+                              'Vista resumen tipo widget. Toca la tarjeta para ver '
+                              'los detalles de la moneda seleccionada.',
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: CupertinoColors.systemGrey,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
                             CryptoSummaryCard(
-                              crypto: provider.crypto!,
+                              crypto: crypto,
                               onTap: () {
                                 Navigator.of(context).push(
                                   CupertinoPageRoute(
                                     builder: (_) =>
-                                        DetailView(crypto: provider.crypto!),
+                                        DetailView(crypto: crypto),
                                   ),
                                 );
                               },
                             ),
-                            const SizedBox(height: 24),
-                            CupertinoButton(
-                              onPressed: () {
-                                provider.loadBitcoin();
-                              },
-                              child: const Text('Actualizar información'),
+
+                            const SizedBox(height: 12),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Mostrando: ${crypto.name} (${crypto.symbol})',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: CupertinoColors.systemGrey,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                CupertinoButton(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  onPressed: () {
+                                    provider.nextCrypto();
+                                  },
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.arrow_2_squarepath,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        'Cambiar moneda',
+                                        style: TextStyle(fontSize: 13),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                CupertinoButton(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  onPressed: () {
+                                    provider.loadCryptos();
+                                  },
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        CupertinoIcons.refresh,
+                                        size: 18,
+                                      ),
+                                      SizedBox(width: 6),
+                                      Text('Actualizar datos'),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import '../models/crypto.dart';
 
 class CryptoSummaryCard extends StatelessWidget {
@@ -19,26 +18,45 @@ class CryptoSummaryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(18),
+          gradient: const LinearGradient(
+            colors: [
+              CupertinoColors.systemIndigo,
+              CupertinoColors.systemBlue,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(22),
+          boxShadow: const [
+            BoxShadow(
+              color: CupertinoColors.systemGrey4,
+              blurRadius: 12,
+              offset: Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
+            // Icono / logo
             ClipRRect(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(18),
               child: Image.network(
                 crypto.imageUrl,
-                width: 40,
-                height: 40,
-                errorBuilder: (_, __, ___) => const Icon(
-                  CupertinoIcons.bitcoin_circle,
-                  size: 40,
-                ),
+                width: 44,
+                height: 44,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    CupertinoIcons.bitcoin_circle,
+                    size: 44,
+                    color: CupertinoColors.white,
+                  );
+                },
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
+            // Nombre y precio
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +65,8 @@ class CryptoSummaryCard extends StatelessWidget {
                     '${crypto.name} (${crypto.symbol})',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 17,
+                      color: CupertinoColors.white,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -55,36 +74,52 @@ class CryptoSummaryCard extends StatelessWidget {
                   Text(
                     '\$${crypto.currentPrice.toStringAsFixed(2)}',
                     style: const TextStyle(
-                      fontSize: 15,
+                      fontSize: 16,
+                      color: CupertinoColors.white,
                     ),
                   ),
                 ],
               ),
             ),
             const SizedBox(width: 8),
+            // Variación y hint
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Icon(
-                  isPositive
-                      ? CupertinoIcons.arrow_up_right
-                      : CupertinoIcons.arrow_down_right,
-                  size: 18,
-                  color:
-                      isPositive ? CupertinoColors.systemGreen : CupertinoColors.systemRed,
+                Row(
+                  children: [
+                    Icon(
+                      isPositive
+                          ? CupertinoIcons.arrow_up_right
+                          : CupertinoIcons.arrow_down_right,
+                      size: 18,
+                      color: isPositive
+                          ? CupertinoColors.systemGreen
+                          : CupertinoColors.systemRed,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${crypto.priceChangePercentage24h.toStringAsFixed(2)}%',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isPositive
+                            ? CupertinoColors.systemGreen
+                            : CupertinoColors.systemRed,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
-                  '${crypto.priceChangePercentage24h.toStringAsFixed(2)}%',
+                  'Toca para ver detalles',
                   style: TextStyle(
-                    fontSize: 13,
-                    color: isPositive
-                        ? CupertinoColors.systemGreen
-                        : CupertinoColors.systemRed,
+                    fontSize: 12,
+                    color: CupertinoColors.white.withOpacity(0.8),
                   ),
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

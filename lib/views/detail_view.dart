@@ -25,6 +25,7 @@ class DetailView extends StatelessWidget {
     }
 
     return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
         middle: Text('${crypto.name} (${crypto.symbol})'),
       ),
@@ -34,83 +35,113 @@ class DetailView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Encabezado
-              Row(
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      crypto.imageUrl,
-                      width: 60,
-                      height: 60,
-                      errorBuilder: (_, __, ___) => const Icon(
-                        CupertinoIcons.bitcoin_circle,
-                        size: 60,
+              // Card de encabezado
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemBackground,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: CupertinoColors.systemGrey4,
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.network(
+                        crypto.imageUrl,
+                        width: 60,
+                        height: 60,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(
+                            CupertinoIcons.bitcoin_circle,
+                            size: 60,
+                          );
+                        },
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            crypto.name,
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: CupertinoColors.label,
+                            ),
+                          ),
+                          Text(
+                            crypto.symbol,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: CupertinoColors.systemGrey,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '\$${crypto.currentPrice.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w600,
+                              color: CupertinoColors.label,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Text(
-                          crypto.name,
-                          style: const TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Icon(
+                          isPositive
+                              ? CupertinoIcons.arrow_up_right
+                              : CupertinoIcons.arrow_down_right,
+                          color: isPositive
+                              ? CupertinoColors.systemGreen
+                              : CupertinoColors.systemRed,
                         ),
+                        const SizedBox(height: 4),
                         Text(
-                          crypto.symbol,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: CupertinoColors.systemGrey,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '\$${crypto.currentPrice.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 20,
+                          '${crypto.priceChangePercentage24h.toStringAsFixed(2)}%',
+                          style: TextStyle(
+                            color: isPositive
+                                ? CupertinoColors.systemGreen
+                                : CupertinoColors.systemRed,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Icon(
-                        isPositive
-                            ? CupertinoIcons.arrow_up_right
-                            : CupertinoIcons.arrow_down_right,
-                        color: isPositive
-                            ? CupertinoColors.systemGreen
-                            : CupertinoColors.systemRed,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '${crypto.priceChangePercentage24h.toStringAsFixed(2)}%',
-                        style: TextStyle(
-                          color: isPositive
-                              ? CupertinoColors.systemGreen
-                              : CupertinoColors.systemRed,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
+
               const SizedBox(height: 24),
 
+              // Sección resumen
               const Text(
                 'Resumen de mercado',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: CupertinoColors.label,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Datos expresados en dólares estadounidenses (USD) '
+                'para el intervalo de las últimas 24 horas.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.systemGrey,
                 ),
               ),
               const SizedBox(height: 12),
@@ -143,11 +174,23 @@ class DetailView extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
+
+              // Sección suministro
               const Text(
                 'Suministro',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: CupertinoColors.label,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Text(
+                'Información sobre la cantidad de monedas en circulación y '
+                'el suministro máximo estimado.',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: CupertinoColors.systemGrey,
                 ),
               ),
               const SizedBox(height: 12),
@@ -157,8 +200,7 @@ class DetailView extends StatelessWidget {
                 children: [
                   StatChip(
                     label: 'Circulante',
-                    value:
-                        crypto.circulatingSupply.toStringAsFixed(0),
+                    value: crypto.circulatingSupply.toStringAsFixed(0),
                   ),
                   StatChip(
                     label: 'Máximo',
@@ -170,19 +212,22 @@ class DetailView extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
+
+              // Nota
               const Text(
                 'Nota',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: CupertinoColors.label,
                 ),
               ),
               const SizedBox(height: 8),
               const Text(
-                'Esta pantalla muestra información básica de Bitcoin '
-                'obtenida en tiempo real desde la API pública de CoinGecko. '
-                'Los datos pueden cambiar constantemente debido a la '
-                'volatilidad del mercado de criptomonedas.',
+                'Esta pantalla muestra información básica de la criptomoneda '
+                'seleccionada, obtenida en tiempo real desde la API pública '
+                'de CoinGecko. Los valores se actualizan dinámicamente y pueden '
+                'cambiar de forma significativa debido a la volatilidad del mercado.',
                 style: TextStyle(
                   fontSize: 14,
                   color: CupertinoColors.label,

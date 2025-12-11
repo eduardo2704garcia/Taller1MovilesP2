@@ -6,9 +6,18 @@ import '../models/crypto.dart';
 class CoinGeckoService {
   static const String _baseUrl = 'https://api.coingecko.com/api/v3';
 
-  Future<Crypto> fetchBitcoinData() async {
+  Future<List<Crypto>> fetchMarketData(List<String> ids) async {
+    final idsParam = ids.join(',');
+
     final url = Uri.parse(
-      '$_baseUrl/coins/bitcoin?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false',
+      '$_baseUrl/coins/markets'
+      '?vs_currency=usd'
+      '&ids=$idsParam'
+      '&order=market_cap_desc'
+      '&per_page=${ids.length}'
+      '&page=1'
+      '&sparkline=false'
+      '&price_change_percentage=24h',
     );
 
     if (kDebugMode) {
@@ -22,10 +31,19 @@ class CoinGeckoService {
     }
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return Crypto.fromJson(data);
+      final body = json.decode(response.body);
+
+      if (body is List) {
+        return body
+            .map((jsonItem) => Crypto.fromJson(jsonItem as Map<String, dynamic>))
+            .toList();
+      } else {
+        throw Exception('Respuesta inesperada de CoinGecko (no es lista)');
+      }
     } else {
-      throw Exception('Error al obtener datos de CoinGecko. Status: ${response.statusCode}');
+      throw Exception(
+        'Error al obtener datos de CoinGecko. Status: ${response.statusCode}',
+      );
     }
   }
 }

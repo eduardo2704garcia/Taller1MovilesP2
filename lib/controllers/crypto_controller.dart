@@ -6,7 +6,15 @@ class CryptoController {
 
   CryptoController(this._service);
 
-  Future<Crypto> getBitcoin() async {
-    return await _service.fetchBitcoinData();
+  /// Lista de criptomonedas que se mostrarán en el widget
+  static const List<String> cryptoIds = [
+    'bitcoin',
+    'ethereum',
+    'solana',
+  ];
+
+  /// Obtiene los datos completos del mercado para las criptos seleccionadas
+  Future<List<Crypto>> getTopCryptos() async {
+    return _service.fetchMarketData(cryptoIds);
   }
 }
