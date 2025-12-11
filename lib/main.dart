@@ -1,33 +1,38 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'controllers/crypto_controller.dart';
 import 'providers/crypto_provider.dart';
 import 'services/coingecko_service.dart';
 import 'views/home_view.dart';
+import 'views/detail_view.dart';
 
 void main() {
-  runApp(const CryptoApp());
+  runApp(const MyApp());
 }
 
-class CryptoApp extends StatelessWidget {
-  const CryptoApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final service = CoinGeckoService();
-    final controller = CryptoController(service);
-
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => CryptoProvider(controller: controller),
+          create: (_) =>
+              CryptoProvider(controller: CryptoController(CoinGeckoService())),
         ),
       ],
-      child: const CupertinoApp(
+
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Crypto Widget',
-        home: HomeView(),
+        theme: ThemeData.dark(),
+
+        /// AQUI VAN LAS RUTAS
+        initialRoute: '/',
+        routes: {
+          '/': (context) => const HomeView(),
+          '/detail': (context) => const DetailView(),
+        },
       ),
     );
   }
