@@ -72,4 +72,13 @@ class Crypto {
           : null,
     );
   }
+
+  Map<String, dynamic> toJsonShort() {
+    return {
+      'id': id,
+      'name': name,
+      'price': '\$${currentPrice.toStringAsFixed(2)}',
+      'image': imageUrl,
+    };
+  }
 }

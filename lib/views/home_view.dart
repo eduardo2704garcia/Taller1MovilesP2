@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/crypto_provider.dart';
 import '../models/crypto.dart';
+import '../services/widget_updater.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -49,6 +50,18 @@ class HomeView extends StatelessWidget {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final id = provider.selectedCrypto?.id;
+              if (id != null) {
+                await WidgetUpdater.fetchAndUpdate(id);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Widget actualizado')));
+              }
+            },
+            icon: const Icon(Icons.widgets),
+          ),
+        ],
       ),
 
       body: provider.isLoading
